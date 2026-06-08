@@ -38,7 +38,7 @@ export default function HomeScreen() {
   const getPosts = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://172.16.0.70:8000/api/posts");
+      const response = await fetch("http://171.16.1.164:8000/api/posts");
       const json: ApiResponse = await response.json();
       console.log("API Response:", json);
       console.log("Data:", json.data);

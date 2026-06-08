@@ -105,7 +105,9 @@ export default function PostCard({
             <Text style={styles.name}>{name}</Text>
             <View style={styles.locationRow}>
               <MapPin size={12} color={colors.muted} />
-              <Text style={styles.location}>{location}</Text>
+              <Text numberOfLines={1} style={styles.location}>
+                {location}
+              </Text>
             </View>
           </View>
         </View>
@@ -229,6 +231,7 @@ const styles = StyleSheet.create({
     gap: size.spacing.xxs,
   },
   location: {
+    maxWidth: 170,
     color: colors.muted,
     fontSize: size.fontSize.xs,
     fontWeight: 400,

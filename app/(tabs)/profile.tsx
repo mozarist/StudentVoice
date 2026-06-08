@@ -9,11 +9,13 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type ApiPost = {
   id: number;
@@ -21,13 +23,13 @@ type ApiPost = {
   content: string;
   caption: string | null;
   tagline:
-    | "senang"
-    | "sedih"
-    | "marah"
-    | "tenang"
-    | "terkejut"
-    | "takut"
-    | null;
+  | "senang"
+  | "sedih"
+  | "marah"
+  | "tenang"
+  | "terkejut"
+  | "takut"
+  | null;
   hashtags: string[] | null;
   likes: number | null;
   reposts: number | null;
@@ -47,7 +49,7 @@ export default function ProfileScreen() {
   const getPosts = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://172.16.0.70:8000/api/posts");
+      const response = await fetch("http://171.16.1.164:8000/api/posts");
       const json: ApiResponse = await response.json();
       const all = Array.isArray(json.data) ? json.data : [];
       const mine = all.filter((p) => p.authentication === USERNAME);
@@ -68,86 +70,84 @@ export default function ProfileScreen() {
     <SafeAreaView style={styles.safeAreaView}>
       <Header />
 
-      <View style={localStyles.headerContainer}>
-        <View style={localStyles.avatarRow}>
-          <View style={localStyles.avatarCircle}>
-            <User size={28} color={colors.muted} />
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={{ gap: size.spacing.lg }}>
+          <View style={localStyles.avatarRow}>
+            <View style={localStyles.avatarCircle}>
+              <User size={28} color={colors.muted} />
+            </View>
+
+            <View style={localStyles.userInfo}>
+              <Text style={localStyles.username}>mozarist</Text>
+              <Text style={localStyles.email}>mozarist@gmail.com</Text>
+              <View style={localStyles.statsRow}>
+                <View style={localStyles.statItem}>
+                  <Text style={localStyles.statNumber}>{posts.length}</Text>
+                  <Text style={localStyles.statLabel}>Posts</Text>
+                </View>
+                <View style={localStyles.statItem}>
+                  <Text style={localStyles.statNumber}>0</Text>
+                  <Text style={localStyles.statLabel}>Followers</Text>
+                </View>
+                <View style={localStyles.statItem}>
+                  <Text style={localStyles.statNumber}>0</Text>
+                  <Text style={localStyles.statLabel}>Following</Text>
+                </View>
+              </View>
+            </View>
           </View>
 
-          <View style={localStyles.userInfo}>
-            <Text style={localStyles.username}>mozarist</Text>
-            <Text style={localStyles.email}>mozarist@gmail.com</Text>
-            <Button
-              label="Edit Profile"
-              rounded={size.radius.full}
-              color={colors.secondary}
-              labelColor={colors.foreground}
-              onPress={() => {}}
-              style={{ marginTop: size.spacing.sm }}
-            />
-          </View>
+          <Text style={localStyles.bio}>
+            Full stack developer — building web & mobile products. Loves clean
+            code, testing, and good UX.
+          </Text>
+
+          <Button
+            label="Edit Profile"
+            rounded={size.radius.full}
+            color={colors.secondary}
+            labelColor={colors.foreground}
+            OutlineColor={colors.border}
+            onPress={() => { }}
+            style={{ marginTop: size.spacing.sm }}
+          />
         </View>
 
-        <Text style={localStyles.bio}>
-          Full stack developer — building web & mobile products. Loves clean
-          code, testing, and good UX.
-        </Text>
-
-        <View style={localStyles.statsRow}>
-          <View style={localStyles.statItem}>
-            <Text style={localStyles.statNumber}>{posts.length}</Text>
-            <Text style={localStyles.statLabel}>Posts</Text>
+        {isLoading && posts.length === 0 ? (
+          <View style={localStyles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
-          <View style={localStyles.statItem}>
-            <Text style={localStyles.statNumber}>0</Text>
-            <Text style={localStyles.statLabel}>Followers</Text>
-          </View>
-          <View style={localStyles.statItem}>
-            <Text style={localStyles.statNumber}>0</Text>
-            <Text style={localStyles.statLabel}>Following</Text>
-          </View>
-        </View>
-      </View>
-
-      {isLoading && posts.length === 0 ? (
-        <View style={localStyles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-      ) : (
-        <FlatList
-          data={posts}
-          renderItem={({ item }) => (
-            <PostCard
-              name={item.authentication}
-              coverUri={item.content}
-              caption={item.caption ?? "Post caption"}
-              status={item.tagline}
-              tags={item.hashtags ?? []}
-              likes={item.likes ?? 0}
-              reposts={item.reposts ?? 0}
-              comments={0}
-              location={item.location ?? "Location"}
-            />
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          onRefresh={getPosts}
-          refreshing={isLoading}
-          contentContainerStyle={styles.container}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={
-            <Text style={localStyles.empty}>Belum ada postingan</Text>
-          }
-        />
-      )}
+        ) : (
+          <FlatList
+            data={posts}
+            renderItem={({ item }) => (
+              <PostCard
+                name={item.authentication}
+                coverUri={item.content}
+                caption={item.caption ?? "Post caption"}
+                status={item.tagline}
+                tags={item.hashtags ?? []}
+                likes={item.likes ?? 0}
+                reposts={item.reposts ?? 0}
+                comments={0}
+                location={item.location ?? "Location"}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            onRefresh={getPosts}
+            refreshing={isLoading}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <Text style={localStyles.empty}>Belum ada postingan</Text>
+            }
+          />
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const localStyles = StyleSheet.create({
-  headerContainer: {
-    padding: size.spacing.lg,
-    gap: size.spacing.md,
-  },
   avatarRow: {
     flexDirection: "row",
     gap: size.spacing.md,
