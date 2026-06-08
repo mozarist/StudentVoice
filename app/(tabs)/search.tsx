@@ -1,7 +1,5 @@
 import Header from "@/components/ui/blocks/header2";
 import Input from "@/components/ui/text-input";
-import { colors } from "@/constants/color";
-import * as size from "@/constants/size";
 import { styles } from "@/constants/styles";
 import {
   View,
@@ -9,7 +7,7 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function ProfileScreen() {
+export default function SearchScreen() {
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <Header title="Search" />
